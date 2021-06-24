@@ -1,17 +1,17 @@
 <template>
-  <view class="scroll-Y">
+  <view class="scroll-Y" @touchend="touchend">
     <view class="refresh" :style="{ opacity: opacity, zIndex: zIndex }">
       <!-- 自定义 -->
-      <view
+      <!-- <view
         class="cricel rotate"
         :style="{ transform: `rotate(${rotate}deg)` }"
-      ></view>
+      ></view> -->
       <!-- 图片 -->
-      <!-- <image
+      <image
         src="./loading.png"
         :style="{ transform: `rotate(${rotate}deg)` }"
         mode="aspectFit"
-      /> -->
+      />
     </view>
     <scroll-view
       scroll-y="true"
@@ -19,13 +19,14 @@
       :refresher-enabled="enabled && isenabled"
       :scroll-with-animation="true"
       refresher-default-style="none"
-      :refresher-threshold="60"
+      :refresher-threshold="refresherThreshold"
       :refresher-triggered="triggered"
       :enable-back-to-top="true"
       @refresherrefresh="refresherrefresh"
       @scrolltolower="scrolltolower"
       @refresherrestore="refresherrestore"
       @refresherpulling="refresherpulling"
+      @scroll="scroll"
     >
       <slot></slot>
       <view class="end" v-if="end">
@@ -46,7 +47,11 @@ export default {
       enabled: true,
       opacity: 0,
       zIndex: 0,
-      rotate: 0
+      rotate: 0,
+      currentTop: 0,
+      // 距离多少触发下拉刷新
+      refresherThreshold: 60,
+      scrollTop: 0
     }
   },
   methods: {
@@ -70,15 +75,32 @@ export default {
       this.$emit('scrolltolower')
     },
     refresherrestore() {
-      console.log('自定义下拉刷新被复位	')
-      this.zIndex = 0
-      this.opacity = 0
-      this.rotate = 0
+      this.resetParams()
     },
     refresherpulling(e) {
+      if (this.scrollTop > 0) {
+        return
+      }
       this.zIndex = 2
       this.opacity = e.detail.deltaY / 100
       this.rotate = (e.detail.deltaY / 100) * 360
+      this.currentTop = e.detail.deltaY
+    },
+    touchend() {
+      if (this.currentTop < this.refresherThreshold) {
+        this.resetParams()
+      }
+    },
+    resetParams(callback) {
+      this.zIndex = 0
+      this.opacity = 0
+      this.rotate = 0
+      callback && callback()
+    },
+    scroll(e) {
+      // console.log()
+      // this.resetParams()
+      this.scrollTop = e.detail.scrollTop <= 10 ? 0 : e.detail.scrollTop
     }
   }
 }

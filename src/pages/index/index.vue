@@ -5,12 +5,13 @@
     <!-- <xh-authorization @callback="initApi"></xh-authorization> -->
     <xh-load-more
       @refresherrefresh="refresherrefresh"
+      @scrolltolower="scrolltolower"
       :isenabled="true"
-      :nodata="true"
-      :end="true"
+      :nodata="nodata"
+      :end="end"
     >
-      <view class="wraper">
-        你好，钉钉小程序
+      <view class="wraper" v-for="(item, index) in list" :key="index">
+        你好，钉钉小程序{{ item }}
       </view>
     </xh-load-more>
   </view>
@@ -19,7 +20,36 @@
 <script>
 export default {
   data() {
-    return {}
+    return {
+      list: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      nodata: false,
+      end: false
+    }
   },
   onLoad() {
     uni.chooseChatForNormalMsg({
@@ -41,10 +71,23 @@ export default {
 
   onShareAppMessage() {},
   methods: {
-    refresherrefresh(callback) {
+    refresherrefresh(stop) {
+      uni.showLoading({
+        title: '下拉加载中'
+      })
       setTimeout(() => {
-        callback()
+        stop()
+        uni.hideLoading()
       }, 500)
+    },
+    scrolltolower() {
+      // console.log('上拉架子啊')
+      // console.log(this.list.length > 40)
+      if (this.list.length > 80) {
+        this.end = true
+        return
+      }
+      this.list = [...this.list, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     }
   },
   computed: {}
