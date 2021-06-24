@@ -1,30 +1,52 @@
 <template>
-  <scroll-view
-    scroll-y="true"
-    class="scroll-Y"
-    :refresher-enabled="true"
-    :scroll-with-animation="true"
-    refresher-default-style="none"
-    :refresher-threshold="60"
-    :refresher-triggered="triggered"
-    @refresherrefresh="refresherrefresh"
-    @scrolltolower="scrolltolower"
-  >
-    <slot></slot>
-    <view class="end" v-if="end">
-      到底啦，没有更多数据喽~~
+  <view class="scroll-Y">
+    <view class="refresh" :style="{ opacity: opacity, zIndex: zIndex }">
+      <!-- 自定义 -->
+      <view
+        class="cricel rotate"
+        :style="{ transform: `rotate(${rotate}deg)` }"
+      ></view>
+      <!-- 图片 -->
+      <!-- <image
+        src="./loading.png"
+        :style="{ transform: `rotate(${rotate}deg)` }"
+        mode="aspectFit"
+      /> -->
     </view>
-    <view class="nodata" v-if="nodata">
-      无任何数据哦
-    </view>
-  </scroll-view>
+    <scroll-view
+      scroll-y="true"
+      class="scroll-Y"
+      :refresher-enabled="enabled && isenabled"
+      :scroll-with-animation="true"
+      refresher-default-style="none"
+      :refresher-threshold="60"
+      :refresher-triggered="triggered"
+      :enable-back-to-top="true"
+      @refresherrefresh="refresherrefresh"
+      @scrolltolower="scrolltolower"
+      @refresherrestore="refresherrestore"
+      @refresherpulling="refresherpulling"
+    >
+      <slot></slot>
+      <view class="end" v-if="end">
+        到底啦，没有更多数据喽~~
+      </view>
+      <view class="nodata" v-if="nodata">
+        无任何数据哦
+      </view>
+    </scroll-view>
+  </view>
 </template>
 <script>
 export default {
-  props: ['nodata', 'end'],
+  props: ['nodata', 'end', 'isenabled'],
   data() {
     return {
-      triggered: false
+      triggered: false,
+      enabled: true,
+      opacity: 0,
+      zIndex: 0,
+      rotate: 0
     }
   },
   methods: {
@@ -32,16 +54,31 @@ export default {
       this.triggered = true
       this.$emit('refresherrefresh', () => {
         this.triggered = false
+        this.enabled = false
+        setTimeout(() => {
+          this.enabled = true
+        }, 200)
       })
       // setTimeout(() => {
       //   this.triggered = false
       // }, 500)
     },
     scrolltolower() {
-      if (this.end) {
+      if (this.end || this.nodata) {
         return
       }
       this.$emit('scrolltolower')
+    },
+    refresherrestore() {
+      console.log('自定义下拉刷新被复位	')
+      this.zIndex = 0
+      this.opacity = 0
+      this.rotate = 0
+    },
+    refresherpulling(e) {
+      this.zIndex = 2
+      this.opacity = e.detail.deltaY / 100
+      this.rotate = (e.detail.deltaY / 100) * 360
     }
   }
 }
@@ -49,6 +86,9 @@ export default {
 <style lang="scss" scoped>
 .scroll-Y {
   height: 100%;
+  position: relative;
+  z-index: 1;
+  background-color: #fff;
 }
 .end,
 .nodata {
@@ -57,6 +97,38 @@ export default {
   margin: r(30) auto;
   font-size: r(13);
 }
-.nodata {
+.refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: r(10);
+  margin: 0 auto;
+  z-index: 0;
+  image {
+    width: r(40);
+    height: r(40);
+  }
+  .cricel {
+    border: 2px solid #ecce85;
+    width: r(40);
+    height: r(40);
+    border-radius: 50%;
+    position: relative;
+  }
+  .cricel:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 70%;
+    height: 70%;
+    background-color: #ecce85;
+  }
 }
 </style>

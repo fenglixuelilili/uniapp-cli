@@ -1,8 +1,3 @@
-<template>
-  <div style="color:red">
-    xxxxxxxx
-  </div>
-</template>
 <script>
 import onLaunch from './utlis/onLaunch.js'
 import store from './store'

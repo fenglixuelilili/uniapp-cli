@@ -3,7 +3,12 @@
     <xh-loading></xh-loading>
     <!-- code 码登陆 -->
     <!-- <xh-authorization @callback="initApi"></xh-authorization> -->
-    <xh-load-more @refresherrefresh="refresherrefresh">
+    <xh-load-more
+      @refresherrefresh="refresherrefresh"
+      :isenabled="true"
+      :nodata="true"
+      :end="true"
+    >
       <view class="wraper">
         你好，钉钉小程序
       </view>
@@ -31,11 +36,17 @@ export default {
     this.$xh.showLoading()
     setTimeout(() => {
       this.$xh.hideLoading()
-    }, 5000)
+    }, 50)
   },
-  refresherrefresh() {},
+
   onShareAppMessage() {},
-  methods: {},
+  methods: {
+    refresherrefresh(callback) {
+      setTimeout(() => {
+        callback()
+      }, 500)
+    }
+  },
   computed: {}
 }
 </script>
