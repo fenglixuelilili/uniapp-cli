@@ -1,0 +1,30 @@
+{
+  "id": "1500640",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "826147",
+      "name": "上传",
+      "font_class": "shangchuan1",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "7712212",
+      "name": "课程",
+      "font_class": "kecheng",
+      "unicode": "e724",
+      "unicode_decimal": 59172
+    },
+    {
+      "icon_id": "7933560",
+      "name": "书",
+      "font_class": "shu",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    }
+  ]
+}

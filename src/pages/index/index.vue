@@ -1,9 +1,9 @@
 <template>
   <view class="index">
-    <xh-loading></xh-loading>
+    <!-- <xh-loading></xh-loading> -->
     <!-- code 码登陆 -->
     <!-- <xh-authorization @callback="initApi"></xh-authorization> -->
-    <xh-load-more
+    <!-- <xh-load-more
       @refresherrefresh="refresherrefresh"
       @scrolltolower="scrolltolower"
       :isenabled="true"
@@ -13,7 +13,8 @@
       <view class="wraper" v-for="(item, index) in list" :key="index">
         你好，钉钉小程序{{ item }}
       </view>
-    </xh-load-more>
+    </xh-load-more> -->
+    <text class="iconfont icon-shangchuan1"></text>
   </view>
 </template>
 

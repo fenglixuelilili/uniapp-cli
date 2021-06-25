@@ -23,3 +23,6 @@ export default {
   }
 }
 </script>
+<style>
+@import url('./static/icon/iconfont.css');
+</style>
