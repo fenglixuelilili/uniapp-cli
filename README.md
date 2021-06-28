@@ -51,6 +51,8 @@ npm run serve-h5
 
 ### 聊天列表-websocket的应用
 
+### 路徑别名处理
+
 ### 第三方组件-components下以uni开头的为第三方组件
 
 

@@ -59,6 +59,21 @@
             }
         }
     },
+    // H5 特有
+    "h5" : {
+        "router" : {
+            "mode" : "history"
+        },
+        "devServer" : {
+            "port" : 9000,
+			"proxy": {
+				"/api": {
+                    "target": "http://xxxx/xx",
+                    "pathRewrite": {"^/api" : ""}
+				}
+			 }
+        }
+    },
     /* SDK配置 */
     "quickapp" : {},
     /* 快应用特有相关 */

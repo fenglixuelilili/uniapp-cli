@@ -33,7 +33,7 @@
   </view>
 </template>
 <script>
-import storeName from '@/utlis/storeSpaceName'
+import storeName from '@utlis/storeSpaceName'
 const { LISTINDEXMESSAGE } = storeName
 export default {
   name: 'chatlist',
@@ -45,6 +45,7 @@ export default {
     }
   },
   onLoad() {
+    // console.log(testGloble)
     // 连接websocket
     if (this.$xh.getStorage(LISTINDEXMESSAGE)) {
       this.list = this.$xh.getStorage(LISTINDEXMESSAGE)
