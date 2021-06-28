@@ -1,23 +1,6 @@
 <template>
   <view class="index">
-    <!-- <xh-loading></xh-loading> -->
-    <!-- 首次登陆弹框 -->
-    <!-- <xh-model-login></xh-model-login> -->
-    <!-- code 码登陆 -->
-    <!-- <xh-authorization @callback="initApi"></xh-authorization> -->
-    <!-- <xh-load-more
-      @refresherrefresh="refresherrefresh"
-      @scrolltolower="scrolltolower"
-      :isenabled="true"
-      :nodata="nodata"
-      :end="end"
-    >
-      <view class="wraper" v-for="(item, index) in list" :key="index">
-        你好，钉钉小程序{{ item }}
-      </view>
-    </xh-load-more> -->
-    <!-- <text class="iconfont icon-shangchuan1"></text> -->
-    <!-- 聊天列表 -->
+    <xh-loading></xh-loading>
     <view class="lists">
       <view
         class="list"
@@ -40,13 +23,20 @@
           </view>
         </view>
       </view>
+      <view
+        style="text-align:center;line-height:50px;font-size:14px;color:#ccc;"
+        v-if="!list.length"
+      >
+        <text>无消息...</text>
+      </view>
     </view>
   </view>
 </template>
 <script>
-import storeName from '../../utlis/storeSpaceName'
+import storeName from '@/utlis/storeSpaceName'
 const { LISTINDEXMESSAGE } = storeName
 export default {
+  name: 'chatlist',
   data() {
     return {
       list: [],
@@ -55,34 +45,22 @@ export default {
     }
   },
   onLoad() {
-    // uni.chooseChatForNormalMsg({
-    //   isConfirm: true, //是否弹出确认窗口，默认为true
-    //   success: res => {
-    //     // 该cid和服务端开发文档-普通会话消息接口配合使用，而且只能使用一次，之后将失效
-    //   },
-    //   fail: err => {
-    //     dd.alert({
-    //       content: JSON.stringify(err)
-    //     })
-    //   }
-    // })
-    // this.$xh.showLoading()
-    // setTimeout(() => {
-    //   this.$xh.hideLoading()
-    // }, 50)
     // 连接websocket
     if (this.$xh.getStorage(LISTINDEXMESSAGE)) {
       this.list = this.$xh.getStorage(LISTINDEXMESSAGE)
     }
+    this.$xh.showLoading()
     uni.connectSocket({
       url: 'ws://127.0.0.1:8181',
       fail(err) {
         console.log(err)
+        this.$xh.hideLoading()
       }
     })
     uni.onSocketOpen(
       function(res) {
-        console.log('WebSocket连接已打开！', res)
+        // console.log('WebSocket连接已打开！', res)
+        this.$xh.hideLoading()
         // 发送消息
         uni.sendSocketMessage({
           data: JSON.stringify({
@@ -97,9 +75,12 @@ export default {
         )
       }.bind(this)
     )
-    uni.onSocketError(function(res) {
-      console.log('WebSocket连接打开失败，请检查！')
-    })
+    uni.onSocketError(
+      function(res) {
+        this.$xh.hideLoading()
+        this.$xh.Toast('WebSocket连接打开失败，请检查node服务端！')
+      }.bind(this)
+    )
   },
   methods: {
     refresherrefresh(stop) {
@@ -135,10 +116,7 @@ export default {
           })
           if (!flag) {
             // 来消息了
-            uni.showToast({
-              title: '来消息了',
-              duration: 2000
-            })
+            this.$xh.Toast('来消息了')
             item.read = false
             this.list.unshift(item)
             this.$xh.setStorage(LISTINDEXMESSAGE, this.list)
@@ -149,14 +127,24 @@ export default {
       }
     },
     readMessage(messageinfo) {
-      // console.log(messageinfo)
-      this.list = this.list.map(item => {
-        if (messageinfo.id === item.id) {
-          messageinfo.read = true
+      uni.showModal({
+        title: '提示',
+        content: '模拟进入聊天详情，并消除当前的消息红点',
+        success: function(res) {
+          if (res.confirm) {
+            // console.log('用户点击确定')
+            this.list = this.list.map(item => {
+              if (messageinfo.id === item.id) {
+                messageinfo.read = true
+              }
+              return item
+            })
+            this.$xh.setStorage(LISTINDEXMESSAGE, this.list)
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
         }
-        return item
       })
-      this.$xh.setStorage(LISTINDEXMESSAGE, this.list)
     }
   },
   computed: {}

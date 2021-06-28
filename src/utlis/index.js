@@ -1,4 +1,5 @@
 import store from '../store/index'
+import storeSpaceName from './storeSpaceName'
 import { baseUrl } from '../api/httpRequestConfig'
 // var Base64 = require('./base64.js')
 var sMD5 = require('./md5.js')
@@ -232,9 +233,8 @@ function caniUse(apistr, api) {
     return _null
   }
 }
-
-// 隐藏/显示 tab栏
 export default {
+  // 隐藏/显示 tab栏
   tabBar(type, obj = {}) {
     if (type === 'show') {
       uni.showTabBar(obj)
@@ -287,20 +287,20 @@ export default {
   getStorage(key) {
     try {
       let value = uni.getStorageSync(key)
-      if (
-        typeof value !== 'number' &&
-        typeof value !== 'string' &&
-        value !== undefined &&
-        value !== null
-      ) {
-        value = JSON.parse(value)
-      }
-      if (value) {
-        return value
-      }
+      return JSON.parse(value)
+      // if (
+      //   typeof value !== 'number' &&
+      //   typeof value !== 'string' &&
+      //   value !== undefined &&
+      //   value !== null
+      // ) {
+      //   value = JSON.parse(value)
+      // }
+      // if (value) {
+      //   return value
+      // }
     } catch (e) {
       let value = uni.getStorageSync(key)
-      console.log(e, 'getStorage获取出错，出错key 和 data为：', key, value)
       return value
     }
   },
@@ -434,10 +434,7 @@ export default {
   },
   // 本地存储的命名在这里面
   getSpacename() {
-    return {
-      // 课程列表
-      // COURSE: 'course'
-    }
+    return storeSpaceName
   },
   // 发起支付
   pay(data, success, fail) {
