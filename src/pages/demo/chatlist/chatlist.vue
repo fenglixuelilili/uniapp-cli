@@ -131,7 +131,7 @@ export default {
       uni.showModal({
         title: '提示',
         content: '模拟进入聊天详情，并消除当前的消息红点',
-        success: function(res) {
+        success: res => {
           if (res.confirm) {
             // console.log('用户点击确定')
             this.list = this.list.map(item => {
